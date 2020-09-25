@@ -17,6 +17,12 @@ Office.onReady(info => {
 
         // Assign event handlers and other initialization logic.
         document.getElementById("create-table").onclick = createTable;
+        document.getElementById("filter-table").onclick = filterTable;
+        document.getElementById("sort-table").onclick = sortTable;
+        document.getElementById("create-chart").onclick = createChart;
+        // document.getElementById("freeze-header").onclick = freezeHeader;
+        // document.getElementById("clear-filters").onclick = clearFilters;
+        document.getElementById("open-dialog").onclick = openDialog;
     }
 });
 
@@ -56,5 +62,135 @@ function createTable() {
                 console.log("Debug info: " + JSON.stringify(error.debugInfo));
             }
         });
+}
+
+function filterTable() {
+    Excel.run(function (context) {
+        var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+        var expensesTable = currentWorksheet.tables.getItem('ExpensesTable');
+        var categoryFilter = expensesTable.columns.getItem('Category').filter;
+        categoryFilter.applyValuesFilter(['Education', 'Groceries']);
+
+        return context.sync();
+    })
+        .catch(function (error) {
+            console.log("Error: " + error);
+            if (error instanceof OfficeExtension.Error) {
+                console.log("Debug info: " + JSON.stringify(error.debugInfo));
+            }
+        });
+}
+
+function sortTable() {
+    Excel.run(function (context) {
+
+        // TODO1: Queue commands to sort the table by Merchant name.
+        var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+        var expensesTable = currentWorksheet.tables.getItem('ExpensesTable');
+        var sortFields = [
+            {
+                key: 1,            // Merchant column
+                ascending: false,
+            }
+        ];
+
+        expensesTable.sort.apply(sortFields);
+        return context.sync();
+    })
+        .catch(function (error) {
+            console.log("Error: " + error);
+            if (error instanceof OfficeExtension.Error) {
+                console.log("Debug info: " + JSON.stringify(error.debugInfo));
+            }
+        });
+}
+
+function createChart() {
+    Excel.run(function (context) {
+
+        // TODO1: Queue commands to get the range of data to be charted.
+        var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+        var expensesTable = currentWorksheet.tables.getItem('ExpensesTable');
+        var dataRange = expensesTable.getDataBodyRange();
+
+        // TODO2: Queue command to create the chart and define its type.
+        var chart = currentWorksheet.charts.add('ColumnClustered', dataRange, 'auto');
+
+        // TODO3: Queue commands to position and format the chart.
+        chart.setPosition("A15", "F30");
+        chart.title.text = "Expenses";
+        chart.legend.position = "right"
+        chart.legend.format.fill.setSolidColor("white");
+        chart.dataLabels.format.font.size = 15;
+        chart.dataLabels.format.font.color = "black";
+        chart.series.getItemAt(0).name = 'Value in &euro;';
+
+        return context.sync();
+    })
+        .catch(function (error) {
+            console.log("Error: " + error);
+            if (error instanceof OfficeExtension.Error) {
+                console.log("Debug info: " + JSON.stringify(error.debugInfo));
+            }
+        });
+}
+
+function freezeHeader() {
+    Excel.run(function (context) {
+
+        // TODO1: Queue commands to keep the header visible when the user scrolls.
+        var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+        currentWorksheet.freezePanes.freezeRows(1);
+        return context.sync();
+    })
+        .catch(function (error) {
+            console.log("Error: " + error);
+            if (error instanceof OfficeExtension.Error) {
+                console.log("Debug info: " + JSON.stringify(error.debugInfo));
+            }
+        });
+}
+
+
+function clearFilters() {
+    Excel.run(function (context) {
+        var currentWorksheet = context.workbook.worksheets.getActiveWorksheet();
+        var expensesTable = currentWorksheet.tables.getItem('ExpensesTable');
+
+        for (let i = 0; i < expensesTable.columns.length; i++) {
+            let f = expensesTable.columns.getItemAt(i).filter;
+            f.clear();
+        }
+        // var categoryFilter = expensesTable.columns.getItem('Category').filter;
+        // categoryFilter.clear();
+        return context.sync();
+    })
+        .catch(function (error) {
+            console.log("Error: " + error);
+            if (error instanceof OfficeExtension.Error) {
+                console.log("Debug info: " + JSON.stringify(error.debugInfo));
+            }
+        });
+
+}
+
+var dialog = null;
+
+function openDialog() {
+    // TODO1: Call the Office Common API that opens a dialog
+    Office.context.ui.displayDialogAsync(
+        'https://localhost:3000/popup.html',
+        {height: 45, width: 55},
+        // TODO2: Add callback parameter.
+        function (result) {
+            dialog = result.value;
+            dialog.addEventHandler(Microsoft.Office.WebExtension.EventType.DialogMessageReceived, processMessage);
+        }
+    );
+}
+
+function processMessage(arg) {
+    document.getElementById("user-name").innerHTML = arg.message;
+    // dialog.close();
 }
 
