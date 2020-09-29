@@ -19,7 +19,15 @@ Office.onReady(info => {
 });
 
 export async function run() {
-    /**
-     * Insert your Outlook code here
-     */
+    // Get a reference to the current message
+    var item = Office.context.mailbox.item;
+    appendLine("Subject", item.subject);
+    appendLine("To", item.to[0].emailAddress);
+    appendLine("RecipientType", item.to[0].recipientType);
+    appendLine("DisplayName", item.to[0].displayName);
+    appendLine("Body", JSON.stringify(item.body.));
+}
+
+function appendLine(label, content) {
+    document.getElementById("item-subject").innerHTML += "<b>"+label+":</b> <br/>" + content +"<br/>";
 }
