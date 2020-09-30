@@ -19,15 +19,25 @@ Office.onReady(info => {
 });
 
 export async function run() {
-    // Get a reference to the current message
+    getItemSubject().innerHTML = "";
+
+    // ---
     var item = Office.context.mailbox.item;
+    // ---
+
     appendLine("Subject", item.subject);
     appendLine("To", item.to[0].emailAddress);
     appendLine("RecipientType", item.to[0].recipientType);
     appendLine("DisplayName", item.to[0].displayName);
-    appendLine("Body", JSON.stringify(item.body.));
+    appendLine("Body", JSON.stringify(item.body));
+    appendLine("HostName", Office.context.mailbox.diagnostics.hostName);
+    appendLine("HostVersion", Office.context.mailbox.diagnostics.hostVersion);
 }
 
 function appendLine(label, content) {
-    document.getElementById("item-subject").innerHTML += "<b>"+label+":</b> <br/>" + content +"<br/>";
+    getItemSubject().innerHTML += "<b>" + label + ":</b> <br/>" + content + "<br/>";
+}
+
+function getItemSubject() {
+    return document.getElementById("item-subject");
 }

@@ -2,7 +2,7 @@
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
     <Id>5ce0cbf1-fdd2-4a94-a66e-15c3bd28a2bf</Id>
     <Version>1.0.0.0</Version>
-    <ProviderName>Logo</ProviderName>
+    <ProviderName>Contoso</ProviderName>
     <DefaultLocale>en-US</DefaultLocale>
     <DisplayName DefaultValue="outlook" />
     <Description DefaultValue="Email operations via task pane" />
