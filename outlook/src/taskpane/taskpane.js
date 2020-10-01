@@ -23,6 +23,7 @@ export async function run() {
 
     // ---
     var item = Office.context.mailbox.item;
+    
     // ---
 
     appendLine("Subject", item.subject);
@@ -32,6 +33,7 @@ export async function run() {
     appendLine("Body", JSON.stringify(item.body));
     appendLine("HostName", Office.context.mailbox.diagnostics.hostName);
     appendLine("HostVersion", Office.context.mailbox.diagnostics.hostVersion);
+    appendLine("AttachmentLength", item.attachments.length);
 }
 
 function appendLine(label, content) {
